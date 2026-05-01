@@ -2,6 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { User } from '../../types/User';
 import { client } from '../../utils/axiosClient';
+import { RootState } from '../../app/store';
 
 export type UsersState = {
   loadedUsers: User[];
@@ -15,11 +16,25 @@ const initialState: UsersState = {
   isError: false,
 };
 
-export const loadUsers = createAsyncThunk<User[]>('users/fetch', async () => {
-  const data = await client.get<User[]>('/users');
+export const loadUsers = createAsyncThunk<User[]>(
+  'users/fetch',
+  async () => {
+    const data = await client.get<User[]>('/users');
 
-  return data;
-});
+    return data;
+  },
+  {
+    condition: (_, { getState }) => {
+      const { users } = getState() as RootState;
+
+      if (users.loadedUsers.length > 0) {
+        return false;
+      }
+
+      return true;
+    },
+  },
+);
 
 export const usersSlice = createSlice({
   name: 'users',
