@@ -30,8 +30,10 @@ export const App: React.FC = () => {
   const author = useAppSelector(state => state.author);
 
   useEffect(() => {
-    dispatch(loadUsers());
-  }, [dispatch]);
+    if (loadedUsers.length < 1) {
+      dispatch(loadUsers());
+    }
+  }, []);
 
   useEffect(() => {
     dispatch(setPost(null));

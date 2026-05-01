@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/indent */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Post } from '../../types/Post';
 import { client } from '../../utils/axiosClient';
+import { RootState } from '../../app/store';
 
 type PostsTypeState = {
   items: Post[];
@@ -15,15 +17,29 @@ const initialState: PostsTypeState = {
   hasError: false,
 };
 
-export const loadingPosts = createAsyncThunk<Post[], number>(
-  'posts/axios',
+export const loadingPosts = createAsyncThunk<
+  Post[],
+  number,
+  { state: RootState }
+>(
+  'posts/fetch',
   async (userId: number) => {
     const data = await client.get<Post[]>(`/posts?userId=${userId}`);
 
     return data;
   },
-);
+  {
+    condition: (userId, { getState }) => {
+      const { posts } = getState();
 
+      if (posts.items.length > 0) {
+        return false;
+      }
+
+      return true;
+    },
+  },
+);
 export const postsSlice = createSlice({
   name: 'posts',
   initialState,
