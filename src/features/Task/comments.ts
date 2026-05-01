@@ -5,15 +5,15 @@ import { client } from '../../utils/axiosClient';
 import { Comment, CommentData } from '../../types/Comment';
 
 type CommentsTypeState = {
-  isLoading: boolean;
-  isError: boolean;
-  comments: Comment[];
+  loaded: boolean;
+  hasError: boolean;
+  items: Comment[];
 };
 
 const initialState: CommentsTypeState = {
-  isLoading: false,
-  isError: false,
-  comments: [],
+  loaded: false,
+  hasError: false,
+  items: [],
 };
 
 export const loadingComments = createAsyncThunk<Comment[], number>(
@@ -50,28 +50,28 @@ export const commentsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(loadingComments.pending, state => {
-        state.isLoading = true;
-        state.isError = false;
+        state.loaded = true;
+        state.hasError = false;
       })
       .addCase(loadingComments.fulfilled, (state, action) => {
-        state.comments = action.payload;
-        state.isLoading = false;
+        state.items = action.payload;
+        state.loaded = false;
       })
       .addCase(loadingComments.rejected, state => {
-        state.isError = true;
-        state.isLoading = false;
+        state.hasError = true;
+        state.loaded = false;
       })
 
       .addCase(createComment.fulfilled, (state, action) => {
-        state.comments.push(action.payload);
+        state.items.push(action.payload);
       })
       .addCase(createComment.rejected, state => {
-        state.isError = true;
+        state.hasError = true;
       })
       .addCase(
         deleteComment.fulfilled,
         (state, action: PayloadAction<number>) => {
-          state.comments = state.comments.filter(c => c.id !== action.payload);
+          state.items = state.items.filter(c => c.id !== action.payload);
         },
       );
   },

@@ -4,15 +4,15 @@ import { Post } from '../../types/Post';
 import { client } from '../../utils/axiosClient';
 
 type PostsTypeState = {
-  posts: Post[];
-  isLoadingPost: boolean;
-  isErrorPost: boolean;
+  items: Post[];
+  loaded: boolean;
+  hasError: boolean;
 };
 
 const initialState: PostsTypeState = {
-  posts: [],
-  isLoadingPost: false,
-  isErrorPost: false,
+  items: [],
+  loaded: false,
+  hasError: false,
 };
 
 export const loadingPosts = createAsyncThunk<Post[], number>(
@@ -29,21 +29,21 @@ export const postsSlice = createSlice({
   initialState,
   reducers: {
     clearPosts: state => {
-      state.posts = [];
+      state.items = [];
     },
   },
   extraReducers(builder) {
     builder.addCase(loadingPosts.pending, state => {
-      state.isLoadingPost = true;
-      state.isErrorPost = false;
+      state.loaded = true;
+      state.hasError = false;
     });
     builder.addCase(loadingPosts.fulfilled, (state, action) => {
-      state.posts = action.payload;
-      state.isLoadingPost = false;
+      state.items = action.payload;
+      state.loaded = false;
     });
     builder.addCase(loadingPosts.rejected, state => {
-      state.isErrorPost = true;
-      state.isLoadingPost = false;
+      state.hasError = true;
+      state.loaded = false;
     });
   },
 });

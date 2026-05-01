@@ -10,20 +10,24 @@ import { PostDetails } from './components/PostDetails';
 import { UserSelector } from './components/UserSelector';
 import { Loader } from './components/Loader';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import { loadUsers, setUser } from './features/Task/users';
+import { loadUsers } from './features/Task/users';
 import { loadingPosts, clearPosts } from './features/Task/posts';
 import { setPost } from './features/Task/selectedPost';
 import { User } from './types/User';
 import { Post } from './types/Post';
+import { setAuthor } from './features/Task/author';
 
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { loadedUsers, activeUser } = useAppSelector(state => state.users);
-  const { posts, isLoadingPost, isErrorPost } = useAppSelector(
-    state => state.posts,
-  );
+  const { loadedUsers } = useAppSelector(state => state.users);
+  const {
+    items: posts,
+    loaded: isLoadingPost,
+    hasError: isErrorPost,
+  } = useAppSelector(state => state.posts);
   const selectedPost = useAppSelector(state => state.selectedPost);
+  const author = useAppSelector(state => state.author);
 
   useEffect(() => {
     dispatch(loadUsers());
@@ -32,15 +36,15 @@ export const App: React.FC = () => {
   useEffect(() => {
     dispatch(setPost(null));
 
-    if (activeUser) {
-      dispatch(loadingPosts(activeUser.id));
+    if (author) {
+      dispatch(loadingPosts(author.id));
     } else {
       dispatch(clearPosts());
     }
-  }, [activeUser, dispatch]);
+  }, [author, dispatch]);
 
   const handleUserChange = (user: User) => {
-    dispatch(setUser(user));
+    dispatch(setAuthor(user));
   };
 
   const handlePostSelected = (post: Post | null) => {
@@ -56,19 +60,17 @@ export const App: React.FC = () => {
               <div className="block">
                 <UserSelector
                   users={loadedUsers}
-                  value={activeUser}
+                  value={author}
                   onChange={handleUserChange}
                 />
               </div>
 
               <div className="block" data-cy="MainContent">
-                {!activeUser && (
-                  <p data-cy="NoSelectedUser">No user selected</p>
-                )}
+                {!author && <p data-cy="NoSelectedUser">No user selected</p>}
 
-                {activeUser && isLoadingPost && <Loader />}
+                {author && isLoadingPost && <Loader />}
 
-                {activeUser && !isLoadingPost && isErrorPost && (
+                {author && !isLoadingPost && isErrorPost && (
                   <div
                     className="notification is-danger"
                     data-cy="PostsLoadingError"
@@ -77,7 +79,7 @@ export const App: React.FC = () => {
                   </div>
                 )}
 
-                {activeUser &&
+                {author &&
                   !isLoadingPost &&
                   !isErrorPost &&
                   posts.length === 0 && (
@@ -89,7 +91,7 @@ export const App: React.FC = () => {
                     </div>
                   )}
 
-                {activeUser &&
+                {author &&
                   !isLoadingPost &&
                   !isErrorPost &&
                   posts.length > 0 && (

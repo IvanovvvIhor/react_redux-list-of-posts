@@ -5,14 +5,12 @@ import { client } from '../../utils/axiosClient';
 
 export type UsersState = {
   loadedUsers: User[];
-  activeUser: User | null;
   isLoading: boolean;
   isError: boolean;
 };
 
 const initialState: UsersState = {
   loadedUsers: [],
-  activeUser: null,
   isLoading: false,
   isError: false,
 };
@@ -26,11 +24,7 @@ export const loadUsers = createAsyncThunk<User[]>('users/fetch', async () => {
 export const usersSlice = createSlice({
   name: 'users',
   initialState,
-  reducers: {
-    setUser: (state, action) => {
-      state.activeUser = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
       .addCase(loadUsers.pending, state => {
@@ -49,4 +43,3 @@ export const usersSlice = createSlice({
 });
 
 export default usersSlice.reducer;
-export const { setUser } = usersSlice.actions;

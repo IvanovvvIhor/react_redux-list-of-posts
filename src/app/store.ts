@@ -9,12 +9,14 @@ import { usersSlice } from '../features/Task/users';
 import { commentsSlice } from '../features/Task/comments';
 import { postsSlice } from '../features/Task/posts';
 import { selectedPostSlice } from '../features/Task/selectedPost';
+import { authorSlice } from '../features/Task/author';
 
 const rootReducer = combineSlices(
   usersSlice,
   commentsSlice,
   postsSlice,
   selectedPostSlice,
+  authorSlice,
 );
 
 export const store = configureStore({
