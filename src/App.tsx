@@ -33,7 +33,7 @@ export const App: React.FC = () => {
     if (loadedUsers.length < 1) {
       dispatch(loadUsers());
     }
-  }, []);
+  }, [dispatch, loadedUsers.length]);
 
   useEffect(() => {
     dispatch(setPost(null));
