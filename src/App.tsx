@@ -39,6 +39,7 @@ export const App: React.FC = () => {
     dispatch(setPost(null));
 
     if (author) {
+      dispatch(clearPosts());
       dispatch(loadingPosts(author.id));
     } else {
       dispatch(clearPosts());

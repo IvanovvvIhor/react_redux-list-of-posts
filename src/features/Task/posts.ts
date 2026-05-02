@@ -32,11 +32,13 @@ export const loadingPosts = createAsyncThunk<
     condition: (userId, { getState }) => {
       const { posts } = getState();
 
-      if (posts.items.length > 0) {
-        return false;
+      if (posts.items.length === 0) {
+        return true;
       }
 
-      return true;
+      const currentUserId = posts.items[0].userId;
+
+      return Number(currentUserId) !== Number(userId);
     },
   },
 );
@@ -46,6 +48,7 @@ export const postsSlice = createSlice({
   reducers: {
     clearPosts: state => {
       state.items = [];
+      state.loaded = false;
     },
   },
   extraReducers(builder) {
